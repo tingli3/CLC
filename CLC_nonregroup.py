@@ -6,7 +6,6 @@ from osgeo import osr
 import numpy
 import math
 from fishnet import fishnet
-from skimage.measure import label,regionprops
 
 codedir=os.path.dirname(os.path.realpath(__file__))
 workdir=os.getcwd()
@@ -102,18 +101,6 @@ diffClassArray[densityArray1 < 0.000000001]=4
 diffClassArray[densityArray2 < 0.000000001]=4
 
 diffClassArray.astype(numpy.int16)
-
-print "Regroup..."
-
-label=label(diffClassArray,connectivity=2)
-regions=regionprops(label)
-for region in regions:
-	if region.area < 4:
-		diffClassArray[region.coords[:,0],region.coords[:,1]]=2
-#		for coords in region.coords:
-#			diffClassArray[tuple(coords)]=2
-
-
 diffClassBand.WriteArray(diffClassArray)
 diffClassBand.FlushCache()
 diffClass=None
@@ -123,7 +110,6 @@ densityArray1=None
 densityArray2=None
 #os.system('gdalinfo -mm '+ diffClassRaster)
 #os.system('gdal_polygonize.py {0} -f "ESRI Shapefile" {1}/diff.shp "diff.shp" "clc_code"'.format(diffClassRaster,outdir))
-
 
 
 ### identity line dataset with the reclassified diff raster of line density ###
